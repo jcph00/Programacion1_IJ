@@ -1,4 +1,6 @@
 package co.edu.uniquindio.poo.SegundoCorte.GestionNomina.app;
 
-public class MenuAccion {
+@FunctionalInterface
+public interface MenuAccion {
+    void ejecutar() throws Exception;
 }
