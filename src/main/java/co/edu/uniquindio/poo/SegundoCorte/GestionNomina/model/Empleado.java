@@ -104,7 +104,12 @@ public abstract class Empleado {
     }
 
     public float calcularSalarioNeto() {
-        return calcularSalarioBruto() - calcularDescuentos() + calcularBonificacionCategoria();
+        float salarioNeto = calcularSalarioBruto() - calcularDescuentos() + calcularBonificacionCategoria();
+            if (salarioNeto < 0) {
+                throw new IllegalArgumentException("Salario negativo");
+            } else{
+                return salarioNeto;
+            }
     }
 
 

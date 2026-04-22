@@ -5,9 +5,10 @@ import javax.swing.*;
 import java.awt.Font;
 import java.awt.event.*;
 import co.edu.uniquindio.poo.SegundoCorte.GestionNomina.model.*;
+import java.util.Optional;
 
 public class Main {
-    private static Empresa empresa = new Empresa();
+    private static Empresa empresa = new Empresa(JOptionPane.showInputDialog(null, "Ingrese el nombre de la empresa:", "Bienvenido", JOptionPane.QUESTION_MESSAGE));
     private static Map<Integer, MenuAccion> opciones = new HashMap<>();
 
     public static void main(String[] args) {
@@ -32,8 +33,18 @@ public class Main {
                 if (opciones.containsKey(op)) {
                     opciones.get(op).ejecutar();
                 }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error de entrada", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (NumberFormatException e) {
+                // Este atrapa si el usuario escribe "abc" en la edad o salario
+                JOptionPane.showMessageDialog(null, "Error: Ingrese solo números válidos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (IllegalArgumentException e) {
+                // Este atrapa tus validaciones (salario negativo, etc.)
+                JOptionPane.showMessageDialog(null, "Validación: " + e.getMessage(), "Error de Regla de Negocio", JOptionPane.WARNING_MESSAGE);
+            }
+            catch (Exception e) {
+                // Este es el respaldo para cualquier otro error inesperado
+                JOptionPane.showMessageDialog(null, "Error inesperado: " + e.getMessage());
             }
         }
     }
@@ -47,6 +58,7 @@ public class Main {
         opciones.put(6, () -> mostrarMayor());
         opciones.put(7, () -> JOptionPane.showMessageDialog(null, "La Nómina Total es: $" + empresa.calcularNominaEmpresa()));
         opciones.put(8, () -> mostrarMensajeLargo("Resúmenes de Pago (Records)", empresa.obtenerResumenesTexto()));
+        opciones.put(9, () -> mostrarMayorA());
     }
 
     // --- MÉTODOS DE REGISTRO VISUAL ---
@@ -105,6 +117,21 @@ public class Main {
 
         empresa.registrarEmpleado(new EmpleadoTemporal(nom, doc, edad, base, cat, dias, valorD, desSalud, desPension));
         JOptionPane.showMessageDialog(null, "Empleado Temporal registrado exitosamente.");
+    }
+
+    private static void mostrarMayorA() {
+        float umbral = Float.parseFloat(JOptionPane.showInputDialog("Ingrese el umbral de salario neto:"));
+        List<Empleado> empleados = empresa.buscarEmpleadoSalarioMayorA(umbral);
+        if (empleados.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay empleados con salario neto mayor a $" + umbral);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Empleados con Salario Neto Mayor a $").append(umbral).append("\n\n");
+            for (Empleado emp : empleados) {
+                sb.append(emp).append("\n-------------------\n");
+            }
+            mostrarMensajeLargo("Empleados con Salario Neto Mayor a $" + umbral, sb.toString());
+        }
     }
 
     // --- MÉTODOS DE CONSULTA ---

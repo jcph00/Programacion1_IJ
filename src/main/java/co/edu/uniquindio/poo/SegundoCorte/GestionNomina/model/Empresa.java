@@ -1,13 +1,18 @@
 package co.edu.uniquindio.poo.SegundoCorte.GestionNomina.model;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class Empresa {
     private List<Empleado> empleados;
-    public Empresa() {
+    private String nombre;
+    public Empresa(String nombre) {
         this.empleados = new ArrayList<>();
+        this.nombre = nombre;
     }
+
+
 
     public void mostrarEmpleados() {
         for (Empleado empleado : empleados) {
@@ -34,6 +39,11 @@ public class Empresa {
                 .max((e1, e2) -> Float.compare(e1.calcularSalarioNeto(), e2.calcularSalarioNeto()));
     }
 
+    public List<Empleado> buscarEmpleadoSalarioMayorA(float umbral){
+        return empleados.stream()
+                .filter(e -> e.calcularSalarioNeto() > umbral)
+                .toList();
+    }
     public float calcularNominaEmpresa() {
         return (float) empleados.stream()
                 .mapToDouble(Empleado::calcularSalarioNeto)
